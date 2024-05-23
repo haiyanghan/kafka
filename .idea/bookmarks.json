@@ -1,0 +1,59 @@
+[
+  {
+    "elementType": "BOOKMARK",
+    "name": "broker 向副本中追加消息",
+    "index": 0,
+    "fileDescriptor": "$/core/src/main/scala/kafka/server/ReplicaManager.scala",
+    "linenumber": 742,
+    "group": "kafka",
+    "bookmarkType": "DEFAULT"
+  },
+  {
+    "elementType": "BOOKMARK",
+    "name": "broker 处理链接事件",
+    "index": 0,
+    "fileDescriptor": "$/core/src/main/scala/kafka/network/SocketServer.scala",
+    "linenumber": 747,
+    "group": "网络部分",
+    "bookmarkType": "DEFAULT"
+  },
+  {
+    "elementType": "BOOKMARK",
+    "name": "broker 开始处理请求",
+    "index": 0,
+    "fileDescriptor": "$/core/src/main/scala/kafka/network/SocketServer.scala",
+    "linenumber": 1121,
+    "group": "网络部分",
+    "bookmarkType": "DEFAULT"
+  },
+  {
+    "elementType": "BOOKMARK",
+    "name": "broker 真正处理请求",
+    "index": 0,
+    "fileDescriptor": "$/core/src/main/scala/kafka/server/KafkaApis.scala",
+    "linenumber": 187,
+    "group": "网络部分",
+    "bookmarkType": "DEFAULT"
+  },
+  {
+    "elementType": "BOOKMARK",
+    "name": "broker 定时处理请求",
+    "index": 0,
+    "fileDescriptor": "$/core/src/main/scala/kafka/server/KafkaRequestHandler.scala",
+    "linenumber": 104,
+    "group": "网络部分",
+    "bookmarkType": "DEFAULT"
+  },
+  {
+    "elementType": "GROUP",
+    "name": "kafka",
+    "index": 0,
+    "linenumber": 0
+  },
+  {
+    "elementType": "GROUP",
+    "name": "网络部分",
+    "index": 0,
+    "linenumber": 0
+  }
+]
