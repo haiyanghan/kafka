@@ -67,10 +67,10 @@ import org.apache.kafka.common.security.auth.{KafkaPrincipal, SecurityProtocol}
 import org.apache.kafka.common.security.token.delegation.{DelegationToken, TokenInformation}
 import org.apache.kafka.common.utils.{ProducerIdAndEpoch, Time}
 import org.apache.kafka.common.{Node, TopicIdPartition, TopicPartition, Uuid}
-import org.apache.kafka.coordinator.group.GroupCoordinator
+import org.apache.kafka.coordinator.group.{Group, GroupCoordinator}
 import org.apache.kafka.server.ClientMetricsManager
 import org.apache.kafka.server.authorizer._
-import org.apache.kafka.server.common.MetadataVersion
+import org.apache.kafka.server.common.{GroupVersion, MetadataVersion}
 import org.apache.kafka.server.common.MetadataVersion.{IBP_0_11_0_IV0, IBP_2_3_IV0}
 import org.apache.kafka.server.record.BrokerCompressionType
 import org.apache.kafka.storage.internals.log.{AppendOrigin, FetchIsolation, FetchParams, FetchPartitionData}
@@ -819,7 +819,7 @@ class KafkaApis(val requestChannel: RequestChannel,
       // We will never return a logConfig when the topic is unresolved and the name is null. This is ok since we won't have any records to convert.
       val logConfig = replicaManager.getLogConfig(tp.topicPartition)
 
-      if (logConfig.exists(_.compressionType == BrokerCompressionType.ZSTD.name) && versionId < 10) {
+      if (logConfig.exists(_.compressionType == BrokerCompressionType.ZSTD) && versionId < 10) {
         trace(s"Fetching messages is disabled for ZStandard compressed partition $tp. Sending unsupported version response to $clientId.")
         FetchResponse.partitionResponse(tp, Errors.UNSUPPORTED_COMPRESSION_TYPE)
       } else {
@@ -2362,7 +2362,11 @@ class KafkaApis(val requestChannel: RequestChannel,
 
   def handleWriteTxnMarkersRequest(request: RequestChannel.Request, requestLocal: RequestLocal): Unit = {
     ensureInterBrokerVersion(IBP_0_11_0_IV0)
-    authHelper.authorizeClusterOperation(request, CLUSTER_ACTION)
+    // We are checking for AlterCluster permissions first. If it is not present, we are authorizing cluster operation
+    // The latter will throw an exception if it is denied.
+    if (!authHelper.authorize(request.context, ALTER, CLUSTER, CLUSTER_NAME, logIfDenied = false)) {
+      authHelper.authorizeClusterOperation(request, CLUSTER_ACTION)
+    }
     val writeTxnMarkersRequest = request.body[WriteTxnMarkersRequest]
     val errors = new ConcurrentHashMap[java.lang.Long, util.Map[TopicPartition, Errors]]()
     val markers = writeTxnMarkersRequest.markers
@@ -3793,10 +3797,15 @@ class KafkaApis(val requestChannel: RequestChannel,
       )
   }
 
+  private def isConsumerGroupProtocolEnabled(): Boolean = {
+    val version = metadataCache.features().finalizedFeatures().getOrDefault(GroupVersion.FEATURE_NAME, 0.toShort)
+    config.groupCoordinatorRebalanceProtocols.contains(Group.GroupType.CONSUMER) && version >= GroupVersion.GV_1.featureLevel
+  }
+
   def handleConsumerGroupHeartbeat(request: RequestChannel.Request): CompletableFuture[Unit] = {
     val consumerGroupHeartbeatRequest = request.body[ConsumerGroupHeartbeatRequest]
 
-    if (!config.isNewGroupCoordinatorEnabled) {
+    if (!isConsumerGroupProtocolEnabled()) {
       // The API is not supported by the "old" group coordinator (the default). If the
       // new one is not enabled, we fail directly here.
       requestHelper.sendMaybeThrottle(request, consumerGroupHeartbeatRequest.getErrorResponse(Errors.UNSUPPORTED_VERSION.exception))
@@ -3821,7 +3830,7 @@ class KafkaApis(val requestChannel: RequestChannel,
   def handleConsumerGroupDescribe(request: RequestChannel.Request): CompletableFuture[Unit] = {
     val consumerGroupDescribeRequest = request.body[ConsumerGroupDescribeRequest]
 
-    if (!config.isNewGroupCoordinatorEnabled) {
+    if (!isConsumerGroupProtocolEnabled()) {
       // The API is not supported by the "old" group coordinator (the default). If the
       // new one is not enabled, we fail directly here.
       requestHelper.sendMaybeThrottle(request, request.body[ConsumerGroupDescribeRequest].getErrorResponse(Errors.UNSUPPORTED_VERSION.exception))
