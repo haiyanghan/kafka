@@ -1,21 +1,15 @@
 {
-  "kafka": [
+  "控制器": [
     {
-      "fileDescriptor": "$/core/src/main/scala/kafka/server/ReplicaManager.scala",
-      "linenumber": 742,
-      "name": "broker 向副本中追加消息",
+      "fileDescriptor": "$/core/src/main/scala/kafka/server/KafkaServer.scala",
+      "linenumber": 404,
+      "name": "注册 /brokers/ids/",
       "bookmarkType": "DEFAULT"
     },
     {
       "fileDescriptor": "$/core/src/main/scala/kafka/controller/KafkaController.scala",
       "linenumber": 152,
       "name": "controller 节点变更监听器",
-      "bookmarkType": "DEFAULT"
-    },
-    {
-      "fileDescriptor": "$/server-common/src/main/java/org/apache/kafka/server/util/timer/TimingWheel.java",
-      "linenumber": 96,
-      "name": "时间轮",
       "bookmarkType": "DEFAULT"
     },
     {
@@ -29,19 +23,39 @@
       "linenumber": 122,
       "name": "controller 注册到zookeeper",
       "bookmarkType": "DEFAULT"
+    },
+    {
+      "fileDescriptor": "$/core/src/main/scala/kafka/controller/KafkaController.scala",
+      "linenumber": 2619,
+      "name": "controller 处理broker变更事件",
+      "bookmarkType": "DEFAULT"
+    }
+  ],
+  "kafka": [
+    {
+      "fileDescriptor": "$/server-common/src/main/java/org/apache/kafka/server/util/timer/TimingWheel.java",
+      "linenumber": 96,
+      "name": "时间轮",
+      "bookmarkType": "DEFAULT"
+    },
+    {
+      "fileDescriptor": "$/core/src/main/scala/kafka/server/ReplicaManager.scala",
+      "linenumber": 747,
+      "name": "broker 向副本中追加消息",
+      "bookmarkType": "DEFAULT"
     }
   ],
   "网络部分": [
     {
-      "fileDescriptor": "$/core/src/main/scala/kafka/network/SocketServer.scala",
-      "linenumber": 747,
-      "name": "broker 处理链接事件",
-      "bookmarkType": "DEFAULT"
-    },
-    {
       "fileDescriptor": "$/core/src/main/scala/kafka/server/KafkaApis.scala",
       "linenumber": 187,
       "name": "broker 真正处理请求",
+      "bookmarkType": "DEFAULT"
+    },
+    {
+      "fileDescriptor": "$/core/src/main/scala/kafka/network/SocketServer.scala",
+      "linenumber": 1119,
+      "name": "broker 开始处理请求",
       "bookmarkType": "DEFAULT"
     },
     {
@@ -52,8 +66,8 @@
     },
     {
       "fileDescriptor": "$/core/src/main/scala/kafka/network/SocketServer.scala",
-      "linenumber": 1121,
-      "name": "broker 开始处理请求",
+      "linenumber": 744,
+      "name": "broker 处理链接事件",
       "bookmarkType": "DEFAULT"
     }
   ]
